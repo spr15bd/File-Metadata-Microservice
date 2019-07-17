@@ -33,9 +33,14 @@ app.post('/api/fileanalyse', function(req, res){
   upload(req, res, function(error) {
     if (error) {
       res.send("Error");
+      console.log("There was an error: "+error);
     } else {
-      console.log(req.file);
-      res.json({filename: req.file.filename, size: req.file.size + " " + "bytes"});
+      if (!req.file){
+        res.send("No input (filename) found, please go back and submit a file to upload.");
+      } else {
+        console.log(req.file);
+        res.json({filename: req.file.filename, size: req.file.size + " " + "bytes"});
+      }
     }
   });
   
