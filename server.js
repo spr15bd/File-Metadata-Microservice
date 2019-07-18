@@ -21,7 +21,8 @@ const multerConf = multer.diskStorage({
 
 // Initialise upload
 const upload = multer({
-  storage: multerConf
+  storage: multerConf,
+  limits: {fileSize: 1000000}  // limit uploaded files to 1mb
 }).single('upfile');  
 
 app.get('/', function (req, res) {
@@ -32,8 +33,12 @@ app.post('/api/fileanalyse', function(req, res){
   
   upload(req, res, function(error) {
     if (error) {
-      res.send("Error");
-      console.log("There was an error: "+error);
+      if (error.code=='LIMIT_FILE_SIZE') {
+        res.send("The file size is too big (max size is 1mb)");
+      } else {
+        res.send(error);
+      }
+      console.log(error);
     } else {
       if (!req.file){
         res.send("No input (filename) found, please go back and submit a file to upload.");
